@@ -30,18 +30,34 @@ class GuestbookEntryUnitTests {
 	void rejectsEmptyName() {
 
 		assertThatExceptionOfType(IllegalArgumentException.class)//
-				.isThrownBy(() -> new GuestbookEntry("", "May the 4th be with you!"));
+				.isThrownBy(() -> new GuestbookEntry("", "yoda@lec.me", "May the 4th be with you!"));
+	}
+
+	@Test
+	void rejectsEmptyMail() {
+		assertThatExceptionOfType(IllegalArgumentException.class)
+				.isThrownBy(() -> new GuestbookEntry("Yoda", "", "May the 4th be with you!"));
+	}
+
+	@Test
+	void rejectsInvalidMail() {
+		assertThatExceptionOfType(IllegalArgumentException.class)
+				.isThrownBy(() -> new GuestbookEntry("Yoda", "yoda@", "May the 4th be with you!"));
+		assertThatExceptionOfType(IllegalArgumentException.class)
+				.isThrownBy(() -> new GuestbookEntry("Yoda", "yoda@lec", "May the 4th be with you!"));
+		assertThatExceptionOfType(IllegalArgumentException.class)
+				.isThrownBy(() -> new GuestbookEntry("Yoda", "@lec.me", "May the 4th be with you!"));
 	}
 
 	@Test
 	void rejectsEmptyText() {
 
 		assertThatExceptionOfType(IllegalArgumentException.class)//
-				.isThrownBy(() -> new GuestbookEntry("Ollie", ""));
+				.isThrownBy(() -> new GuestbookEntry("Ollie", "oliver@somemail.com",""));
 	}
 
 	@Test
 	void setsCreationDate() {
-		assertThat(new GuestbookEntry("Ollie", "May the 4th be with you!").getDate()).isNotNull();
+		assertThat(new GuestbookEntry("Ollie", "oliver@somemail.com", "May the 4th be with you!").getDate()).isNotNull();
 	}
 }

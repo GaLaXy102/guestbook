@@ -34,21 +34,30 @@ import org.springframework.util.Assert;
 class GuestbookEntry {
 
 	private @Id @GeneratedValue Long id;
-	private final String name, text;
+	private final String name, mail, text;
 	private final LocalDateTime date;
 
 	/**
 	 * Creates a new {@link GuestbookEntry} for the given name and text.
 	 *
 	 * @param name must not be {@literal null} or empty
+	 * @param mail must not be {@literal null} or empty
 	 * @param text must not be {@literal null} or empty
 	 */
-	public GuestbookEntry(String name, String mail ,String text) {
+	public GuestbookEntry(String name, String mail, String text) {
 
 		Assert.hasText(name, "Name must not be null or empty!");
+		Assert.hasText(mail, "Mail must not be null or empty!");
+		// See https://www.freeformatter.com/java-regex-tester.html
+		Assert.isTrue(mail.toLowerCase().matches("^[-a-z0-9~!$%^&*_=+}{\\'?]+(\\.[-a-z0-9~!$%^&*_=+}{\\'?]+)" +
+						"*@([a-z0-9_][-a-z0-9_]*(\\.[-a-z0-9_]+)" +
+						"*\\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])" +
+						"|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,5})?$"),
+				"Mail must have a valid format!");
 		Assert.hasText(text, "Text must not be null or empty!");
 
 		this.name = name;
+		this.mail = mail;
 		this.text = text;
 		this.date = LocalDateTime.now();
 	}
@@ -56,6 +65,7 @@ class GuestbookEntry {
 	@SuppressWarnings("unused")
 	private GuestbookEntry() {
 		this.name = null;
+		this.mail = null;
 		this.text = null;
 		this.date = null;
 	}
@@ -74,5 +84,9 @@ class GuestbookEntry {
 
 	public String getText() {
 		return text;
+	}
+
+	public String getMail() {
+		return mail;
 	}
 }

@@ -16,6 +16,8 @@
 package guestbook;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Pattern;
 
 /**
  * Type to bind request payloads and make them available in the controller. In contrast to {@link GuestbookEntry} it is
@@ -30,6 +32,11 @@ import javax.validation.constraints.NotBlank;
 class GuestbookForm {
 
 	private final @NotBlank String name;
+	// See https://www.freeformatter.com/java-regex-tester.html
+	private final @Email @Pattern(regexp = "^[-a-z0-9~!$%^&*_=+}{\\'?]+(\\.[-a-z0-9~!$%^&*_=+}{\\'?]+)" +
+			"*@([a-z0-9_][-a-z0-9_]*(\\.[-a-z0-9_]+)" +
+			"*\\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])" +
+			"|([0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}))(:[0-9]{1,5})?$") String mail;
 	private final @NotBlank String text;
 
 	/**
@@ -40,11 +47,13 @@ class GuestbookForm {
 	 * {@link https://github.com/spring-projects/spring-framework/issues/22600} is resolved.
 	 *
 	 * @param name the value to bind to {@code name}
+	 * @param mail the value to bind to {@code mail}
 	 * @param text the value to bind to {@code text}
 	 */
 	public GuestbookForm(String name, String mail, String text) {
 
 		this.name = name;
+		this.mail = mail;
 		this.text = text;
 	}
 
@@ -57,6 +66,17 @@ class GuestbookForm {
 	 */
 	public String getName() {
 		return name;
+	}
+
+	/**
+	 * Returns the value bound to the {@code name} attribute of the request. Needs to be public so that Spring will
+	 * actually consider it for form data binding until
+	 * {@link https://github.com/spring-projects/spring-framework/issues/22600} is resolved.
+	 *
+	 * @return the value bound to {@code name}
+	 */
+	public String getMail() {
+		return mail;
 	}
 
 	/**
@@ -74,9 +94,9 @@ class GuestbookForm {
 	 * Returns a new {@link GuestbookEntry} using the data submitted in the request.
 	 *
 	 * @return the newly created {@link GuestbookEntry}
-	 * @throws IllegalArgumentException if you call this on an instance without the name and text actually set.
+	 * @throws IllegalArgumentException if you call this on an instance without the name, mail and text actually set.
 	 */
 	GuestbookEntry toNewEntry() {
-		return new GuestbookEntry(getName(), null, getText());
+		return new GuestbookEntry(getName(), getMail(), getText());
 	}
 }
